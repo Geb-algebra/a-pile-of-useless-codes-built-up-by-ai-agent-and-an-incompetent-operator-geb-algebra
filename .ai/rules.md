@@ -176,6 +176,7 @@ This is a set of rules you have to follow
 - hono: for HTTP server
 - tailwind css: for styling shapes and colors of HTML elements and texts (not used for defining layouts and placements of elements)
 - css modules: for defining layouts and placements of elements (not used for styling shapes and colors)
+- shadcn/ui: for UI components but as copy-and-paste style, not installed by its CLI like `npx shadcn/ui@latest add button`. `cn` utility for shadcn components is in `app/utils/css.ts`
 
 ## design rules
 
@@ -191,6 +192,57 @@ Every project should follow the manners of domain driven design. Specifically,
 
 Only the operator can add, update and delete Domain objects. You should not do that.
 If you think you have to make some changes to domain objects, you have to ask the operator to do that.
+
+## implementation rules
+
+### UI component
+
+- Please use the following three methods in order of priority from top to bottom.
+    - use shadcn/ui components with their default style
+    - use shadcn/ui components with custom style
+    - implement components by yourself
+- use tailwind css only for styling shapes and colors of HTML elements and texts. Never use it for defining layouts and placements of elements
+- Use css modules only for defining layouts and placements of elements. Never use it for styling shapes and colors
+- Prefer grid layout over other methods such as flex and, if applicable, the best way is to use `grid-template-areas`. 
+
+### React Router's Route modules
+
+Typical implementation of Route modules are like this:
+
+```tsx
+// sample-route.tsx
+import { Link } from "react-router";
+import type { Route } from './+types/sample-route';
+
+export async function loader({ request }: Route.LoaderArgs) {
+    // ...
+    return { say: "hello" };
+}
+
+export async function action({ request }: Route.ActionArgs) {
+    try {
+        // do some mutations according to request
+        return { error: null };
+    } catch (e) {
+        return { error: "some error" };
+    }
+}
+
+export function meta({ request }: Route.MetaArgs) {
+	return [
+		{ title: "pagename" },
+		{ name: "description", content: "blah blah" },
+	];
+}
+
+export default function Home({ loaderData, actionData }: Route.ComponentProps) {
+	return (
+        // page component
+	);
+}
+```
+
+Keep in mind that `loader` and `action` runs in server while other Route Modules (`meta, clientLoader, clientAction` etc and the default export component) runs in client. You can't include client-only codes (`window`, `localStorage` etc) in `loader` and `action` and can't include server-only codes (interacting with DB etc) in other Route Modules.
 
 ## Flowchart for development
 
@@ -218,3 +270,9 @@ graph TD
     ask_operator_for_help --> fix_implementation
     fix_implementation --> run_tests
 ```
+
+## Instructions
+
+Re-consider your plan after you failed (test failed or rejected by the operator) editing a file twice in a row.
+
+Ensure `pnpm run validate` command passes before you report completions of your tasks.
