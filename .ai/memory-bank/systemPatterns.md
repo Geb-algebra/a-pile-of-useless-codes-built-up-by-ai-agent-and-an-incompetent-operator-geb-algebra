@@ -12,6 +12,8 @@ The Domain Modeler follows a Domain-Driven Design (DDD) approach with a clear se
 4. **TypeScript**: Used throughout the application for type safety.
 5. **Factory Pattern**: Used for creating domain objects with proper validation and defaults.
 6. **Repository Pattern**: Used for data access abstraction.
+7. **Service Pattern**: Used for implementing business logic as pure functions.
+8. **BYOK Strategy**: Bring Your Own Key approach for LLM integration, where users provide their own API keys.
 
 ## Design Patterns in Use
 
@@ -40,6 +42,8 @@ Factory classes are used to create domain objects with proper validation and def
 - `CommandFactory`
 - `UbiquitousLanguageFactory`
 - `UseCaseFactory`
+- `LlmConfigFactory`
+- `LlmPromptFactory`
 
 ### Repository Pattern
 
@@ -52,12 +56,23 @@ Repository classes provide data access abstraction for each domain object:
 - `CommandRepository`
 - `UbiquitousLanguageRepository`
 - `UseCaseRepository`
+- `LlmConfigRepository`
 
 These repositories use `localforage` to persist data in the browser's local storage.
 
 ### Service Pattern
 
-Services will contain the business logic for manipulating domain objects. These will be implemented as pure functions that accept domain objects as arguments and return updated copies without mutating the originals.
+Services contain the business logic for manipulating domain objects. These are implemented as pure functions that accept domain objects as arguments and return updated copies without mutating the originals:
+
+- `ModelExtractionService`: Extracts domain model elements from user input using LLMs
+- `ModelGenerationService`: Generates domain models based on extracted information using LLMs
+- `ModelRefinementService`: Refines domain models based on user feedback using LLMs
+- `ExportService`: Exports domain models in various formats
+- `LlmService`: Provides a facade for interacting with different LLM providers
+
+### Facade Pattern
+
+The `LlmService` acts as a facade that abstracts the interaction with different LLM providers. It provides a consistent interface for the application to use, regardless of the underlying LLM provider.
 
 ### Type Branding
 
@@ -101,8 +116,21 @@ graph TD
         Actions --> Services
     end
     
+    subgraph LLM
+        LlmModels[LLM Models]
+        LlmFactories[LLM Factories]
+        LlmRepositories[LLM Repositories]
+        LlmServices[LLM Services]
+        
+        LlmModels --> LlmFactories
+        LlmModels --> LlmRepositories
+        LlmModels --> LlmServices
+        LlmFactories --> LlmRepositories
+    end
+    
     UI --> Application
     Application --> Domain
+    Domain --> LLM
 ```
 
 ## Data Flow
@@ -114,6 +142,8 @@ sequenceDiagram
     participant Route as Route Components
     participant Loader as Route Loaders/Actions
     participant Service as Services
+    participant LlmService as LLM Service
+    participant LlmProvider as LLM Provider
     participant Repo as Repositories
     participant Storage as Local Storage
     
@@ -125,6 +155,10 @@ sequenceDiagram
     Storage-->>Repo: Return data
     Repo-->>Loader: Return domain objects
     Loader->>Service: Process domain objects
+    Service->>LlmService: Send prompt
+    LlmService->>LlmProvider: Make API call
+    LlmProvider-->>LlmService: Return response
+    LlmService-->>Service: Return processed response
     Service-->>Loader: Return updated objects
     Loader->>Repo: Save updated objects
     Repo->>Storage: Persist changes
@@ -135,11 +169,18 @@ sequenceDiagram
 
 ## LLM Integration
 
-The application will integrate with LLMs to:
+The application integrates with LLMs through the LLM domain, which provides:
+
+1. **Models**: Types for LLM providers, configurations, prompts, and responses
+2. **Factories**: Creation of LLM configurations and prompts with validation
+3. **Repositories**: Persistence of LLM configurations in local storage
+4. **Services**: Interaction with LLM providers through a consistent interface
+
+The LLM integration follows a client-side BYOK (Bring Your Own Key) strategy, where users provide their own API keys for LLM providers. The application currently supports Anthropic as the primary provider, with placeholders for OpenAI, Google, and Mistral.
+
+The LLM domain is used by the modeling services to:
 
 1. Extract ubiquitous language and use cases from user input
-2. Ask clarifying questions
-3. Generate domain models
-4. Refine models based on user feedback
-
-This integration will be implemented in the `llm` domain, which is currently empty but planned for future development.
+2. Generate clarifying questions to refine understanding
+3. Generate domain models based on the extracted information
+4. Refine domain models based on user feedback

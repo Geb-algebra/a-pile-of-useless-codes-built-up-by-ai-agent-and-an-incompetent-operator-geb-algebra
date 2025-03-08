@@ -10,8 +10,8 @@ This file captures important patterns, preferences, and project intelligence for
 - Domain objects are defined as TypeScript types in `models.ts`
 - Factory classes create domain objects with proper validation in `factories.ts`
 - Repository classes handle data persistence in `repositories.ts`
-- Services (to be implemented) will contain business logic in `services.ts`
-- All business logic should be implemented as pure functions that don't mutate arguments
+- Services contain business logic in `services.ts`
+- All business logic is implemented as pure functions that don't mutate arguments
 
 ### Type Safety
 
@@ -24,6 +24,15 @@ This file captures important patterns, preferences, and project intelligence for
 - The project uses `localforage` for client-side storage
 - Each domain object type has its own storage instance
 - Repositories abstract the storage implementation
+
+### LLM Integration
+
+- The project uses a client-side BYOK (Bring Your Own Key) strategy for LLM integration
+- Users provide their own API keys for LLM providers
+- The LLM domain abstracts the interaction with different LLM providers
+- Anthropic is the primary provider, with placeholders for OpenAI, Google, and Mistral
+- The LLM domain provides models, factories, repositories, and services for LLM integration
+- The modeling services use the LLM domain to implement domain modeling functionality
 
 ### UI Component Structure
 
@@ -58,14 +67,9 @@ This file captures important patterns, preferences, and project intelligence for
 - Unit tests are written for all factories, repositories, and services
 - Tests are located alongside the implementation files with `.test.ts` suffix
 - Vitest is used as the testing framework
+- Tests for LLM services mock the fetch API to avoid actual API calls
 
 ## Known Challenges
-
-### LLM Integration
-
-- The LLM domain needs to be implemented
-- Need to determine the approach for integrating with LLMs
-- Need to design the interface between the LLM and the domain model
 
 ### UI Implementation
 
@@ -73,11 +77,25 @@ This file captures important patterns, preferences, and project intelligence for
 - The UI should follow the step-by-step flow described in the project brief
 - Need to balance simplicity for domain experts with power for effective modeling
 
+### LLM Provider Dependencies
+
+- The application depends on external LLM providers
+- Need to handle API rate limits, errors, and fallbacks
+- Need to ensure consistent responses across different providers
+- Need to handle the cost of API calls for users
+
+### Export Functionality
+
+- The export functionality needs to be refined
+- Need to implement the diagram generation functionality
+- Need to design a clear and useful format for the exported model
+
 ## Evolution of Project Decisions
 
-- The project is in its initial development phase
-- Core domain model for the modeling domain has been established
-- Next major focus is implementing the LLM domain and user interface
+- The project has progressed from the initial development phase to implementing the LLM domain
+- The LLM domain has been implemented with a client-side BYOK strategy
+- The modeling services have been updated to use the LLM domain
+- The next focus is on developing the user interface for the domain modeling process
 
 ## Tool Usage Patterns
 
