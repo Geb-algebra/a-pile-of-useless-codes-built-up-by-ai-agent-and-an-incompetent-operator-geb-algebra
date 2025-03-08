@@ -276,3 +276,5 @@ graph TD
 Re-consider your plan after you failed (test failed or rejected by the operator) editing a file twice in a row.
 
 Ensure `pnpm run validate` command passes before you report completions of your tasks.
+
+install packages by `pnpm add package-name` and `pnpm add -D package-name`
