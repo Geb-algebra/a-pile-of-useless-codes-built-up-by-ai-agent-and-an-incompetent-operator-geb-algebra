@@ -15,5 +15,6 @@ export default defineConfig({
 		sequence: {
 			shuffle: true,
 		},
+		setupFiles: ["./app/test/setup-tests.ts"],
 	},
 });
