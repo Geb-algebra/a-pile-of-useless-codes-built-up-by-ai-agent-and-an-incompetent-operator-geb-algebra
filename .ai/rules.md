@@ -294,3 +294,10 @@ install packages by `pnpm add package-name` and `pnpm add -D package-name`
 When you want to fix lint and format errors, first try fixing with `pnpm run check:write-unsafe` to reduce file read and write. If there's still some errors after the command, then fix them manually.=
 
 Run tests with `pnpm run test:unit:run`. The `test:unit` command is for humans.
+
+Dont read these files:
+
+- .react-router/*
+- +types/*
+- .env
+- .dev.vars

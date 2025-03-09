@@ -1,7 +1,9 @@
 import { Link } from "react-router";
+import type { Route } from "./+types/_index";
 
-export async function loader() {
-	console.log("hello from loader");
+export async function loader({ request, context }: Route.LoaderArgs) {
+	const ApiKey = context.hono.context.get("LLM_API_KEY");
+	console.log("hello from loader", ApiKey);
 	return null;
 }
 
