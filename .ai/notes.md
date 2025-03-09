@@ -27,12 +27,14 @@ This file captures important patterns, preferences, and project intelligence for
 
 ### LLM Integration
 
-- The project uses a client-side BYOK (Bring Your Own Key) strategy for LLM integration
-- Users provide their own API keys for LLM providers
+- The project uses a direct API key passing strategy for LLM integration (changed from BYOK)
 - The LLM domain abstracts the interaction with different LLM providers
-- Anthropic is the primary provider, with placeholders for OpenAI, Google, and Mistral
+- Anthropic Claude is the primary provider, with placeholders for other providers
 - The LLM domain provides models, factories, repositories, and services for LLM integration
+- API keys are passed directly to service methods for improved security
 - The modeling services use the LLM domain to implement domain modeling functionality
+- Prompt engineering is used for domain knowledge extraction
+- Conversation flow is implemented for clarifying questions
 
 ### UI Component Structure
 
@@ -79,7 +81,7 @@ This file captures important patterns, preferences, and project intelligence for
 
 ### LLM Provider Dependencies
 
-- The application depends on external LLM providers
+- The application depends on external LLM providers, primarily Anthropic Claude
 - Need to handle API rate limits, errors, and fallbacks
 - Need to ensure consistent responses across different providers
 - Need to handle the cost of API calls for users
@@ -93,8 +95,9 @@ This file captures important patterns, preferences, and project intelligence for
 ## Evolution of Project Decisions
 
 - The project has progressed from the initial development phase to implementing the LLM domain
-- The LLM domain has been implemented with a client-side BYOK strategy
-- The modeling services have been updated to use the LLM domain
+- The LLM domain has been implemented with a direct API key passing strategy (modified from BYOK)
+- The modeling services have been updated to use the LLM domain for extracting ubiquitous language, use cases, and generating domain models
+- Comprehensive unit tests have been added for all components
 - The next focus is on developing the user interface for the domain modeling process
 
 ## Tool Usage Patterns

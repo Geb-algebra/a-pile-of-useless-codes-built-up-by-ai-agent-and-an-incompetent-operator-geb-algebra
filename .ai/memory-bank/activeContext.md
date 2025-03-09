@@ -19,14 +19,15 @@ The application currently has a minimal UI with a basic route structure, and the
    - Implemented factories for creating LLM configurations and prompts
    - Implemented repositories for persisting LLM configurations
    - Implemented services for interacting with the Anthropic LLM provider
+   - Added comprehensive test coverage for all LLM components
 
 2. Integrated LLM with domain modeling services:
    - Updated ModelExtractionService to use LLMs for extracting ubiquitous language, use cases, and generating clarifying questions
    - Updated ModelGenerationService to use LLMs for generating domain models
    - Updated ModelRefinementService to use LLMs for refining domain models and generating refinement suggestions
 
-3. Updated the Architecture Decision Record (ADR) for the LLM domain implementation:
-   - Modified the approach to use API key passing instead of BYOK strategy
+3. Updated the Architecture Decision Record (ADR) for the LLM integration:
+   - Modified the approach to use direct API key passing (instead of BYOK strategy)
    - Focused the implementation on Anthropic Claude as the primary LLM provider
    - Updated the interface between the LLM domain and the modeling domain
    - Outlined the consequences and risks of the chosen approach
@@ -34,25 +35,30 @@ The application currently has a minimal UI with a basic route structure, and the
 4. Added comprehensive unit tests for all components:
    - Tests for LLM factories, repositories, and services
    - Tests for domain modeling services with LLM integration
+   - Test mocking to avoid actual API calls during testing
 
 ## Active Decisions and Considerations
 
 1. **LLM Integration Strategy**:
    - Implemented a client-side approach where API keys are passed directly to service methods
    - API keys are not stored in local storage, improving security
-   - Currently supporting Anthropic Claude as the LLM provider
+   - Currently supporting Anthropic Claude as the primary LLM provider
+   - Designed prompt engineering for domain knowledge extraction
+   - Implemented conversation flow for clarifying questions
 
 2. **UI Design**:
    - Need to design the user interface for the domain modeling process
    - Need to implement the step-by-step flow described in the project brief
+   - Need to balance simplicity for domain experts with power for effective modeling
 
 3. **Data Persistence**:
    - Currently using localforage for client-side storage
-   - Need to consider if this is sufficient or if server-side storage will be needed
+   - Need to consider if this is sufficient or if server-side storage will be needed for larger domain models
 
 4. **Export Format**:
    - The ExportService has placeholder implementations for generating markdown and diagrams
    - Need to refine the export format and implement the full functionality
+   - Need to design a clear and useful format for the exported model
 
 ## Next Steps
 
@@ -61,18 +67,22 @@ The application currently has a minimal UI with a basic route structure, and the
    - Implement the input form for business operations
    - Implement the review and refinement interface for ubiquitous language and use cases
    - Implement the domain model visualization and interaction
+   - Ensure proper state management between steps of the domain modeling process
 
 2. **Refine the Export Functionality**:
    - Implement the full functionality to export the domain model as markdown
    - Implement the diagram generation functionality
    - Design a clear and useful format for the exported model
+   - Consider visualization options for the domain model
 
 3. **Testing and Validation**:
    - Implement integration tests for the complete flow
    - Perform end-to-end testing of the application
    - Validate the application with real-world domain modeling scenarios
+   - Test the application with different LLM providers and configurations
 
 4. **Deployment and Documentation**:
    - Deploy the application to production
    - Create user documentation
    - Create developer documentation
+   - Consider monitoring and analytics for LLM usage
