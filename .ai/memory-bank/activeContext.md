@@ -15,19 +15,20 @@ The application currently has a minimal UI with a basic route structure, and the
 ## Recent Changes
 
 1. Implemented the LLM domain:
-   - Created models for LLM providers, configurations, prompts, and responses
+   - Created models for LLM configurations, prompts, and responses
    - Implemented factories for creating LLM configurations and prompts
    - Implemented repositories for persisting LLM configurations
-   - Implemented services for interacting with LLM providers
+   - Implemented services for interacting with the Anthropic LLM provider
 
 2. Integrated LLM with domain modeling services:
    - Updated ModelExtractionService to use LLMs for extracting ubiquitous language, use cases, and generating clarifying questions
    - Updated ModelGenerationService to use LLMs for generating domain models
    - Updated ModelRefinementService to use LLMs for refining domain models and generating refinement suggestions
 
-3. Created an Architecture Decision Record (ADR) for the LLM domain implementation:
-   - Documented the approach for implementing the LLM domain with a client-side BYOK strategy
-   - Defined the interface between the LLM domain and the modeling domain
+3. Updated the Architecture Decision Record (ADR) for the LLM domain implementation:
+   - Modified the approach to use API key passing instead of BYOK strategy
+   - Focused the implementation on Anthropic Claude as the primary LLM provider
+   - Updated the interface between the LLM domain and the modeling domain
    - Outlined the consequences and risks of the chosen approach
 
 4. Added comprehensive unit tests for all components:
@@ -37,9 +38,9 @@ The application currently has a minimal UI with a basic route structure, and the
 ## Active Decisions and Considerations
 
 1. **LLM Integration Strategy**:
-   - Implemented a client-side BYOK (Bring Your Own Key) strategy for LLM integration
-   - Users will provide their own API keys for LLM providers
-   - Currently supporting Anthropic as the primary provider, with placeholders for OpenAI, Google, and Mistral
+   - Implemented a client-side approach where API keys are passed directly to service methods
+   - API keys are not stored in local storage, improving security
+   - Currently supporting Anthropic Claude as the LLM provider
 
 2. **UI Design**:
    - Need to design the user interface for the domain modeling process

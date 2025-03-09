@@ -15,7 +15,8 @@
 
 3. **LLM Integration**:
    - Models, factories, repositories, and services for the LLM domain are implemented
-   - Integration with LLM providers (Anthropic as primary, with placeholders for others)
+   - Integration with Anthropic Claude as the LLM provider
+   - API keys are passed directly to service methods for improved security
    - Prompt engineering for domain knowledge extraction
    - Conversation flow for clarifying questions
 
@@ -69,7 +70,7 @@ The next major milestone is to develop the user interface for the domain modelin
    - Need to refine the export format and implement the full functionality
 
 4. **LLM Provider Dependencies**:
-   - The application depends on external LLM providers
+   - The application depends on the Anthropic LLM API
    - Need to handle API rate limits, errors, and fallbacks
 
 ## Roadmap
@@ -84,7 +85,7 @@ The next major milestone is to develop the user interface for the domain modelin
 ### Phase 2: LLM Integration (Completed)
 
 - Implement LLM domain
-- Integrate with LLM providers
+- Integrate with Anthropic LLM provider
 - Design prompts for domain knowledge extraction
 - Implement conversation flow
 

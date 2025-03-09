@@ -13,7 +13,7 @@ The Domain Modeler follows a Domain-Driven Design (DDD) approach with a clear se
 5. **Factory Pattern**: Used for creating domain objects with proper validation and defaults.
 6. **Repository Pattern**: Used for data access abstraction.
 7. **Service Pattern**: Used for implementing business logic as pure functions.
-8. **BYOK Strategy**: Bring Your Own Key approach for LLM integration, where users provide their own API keys.
+8. **API Key Passing**: API keys are passed directly to service methods when needed, rather than being stored in the browser.
 
 ## Design Patterns in Use
 
@@ -171,12 +171,12 @@ sequenceDiagram
 
 The application integrates with LLMs through the LLM domain, which provides:
 
-1. **Models**: Types for LLM providers, configurations, prompts, and responses
+1. **Models**: Types for LLM configurations, prompts, and responses
 2. **Factories**: Creation of LLM configurations and prompts with validation
-3. **Repositories**: Persistence of LLM configurations in local storage
-4. **Services**: Interaction with LLM providers through a consistent interface
+3. **Repositories**: Persistence of LLM configurations (without API keys) in local storage
+4. **Services**: Interaction with the Anthropic LLM provider through a consistent interface
 
-The LLM integration follows a client-side BYOK (Bring Your Own Key) strategy, where users provide their own API keys for LLM providers. The application currently supports Anthropic as the primary provider, with placeholders for OpenAI, Google, and Mistral.
+The LLM integration follows a client-side approach where API keys are passed directly to service methods when needed, rather than being stored in the browser. This approach improves security by not persisting API keys in local storage. The application currently supports Anthropic Claude as the LLM provider.
 
 The LLM domain is used by the modeling services to:
 

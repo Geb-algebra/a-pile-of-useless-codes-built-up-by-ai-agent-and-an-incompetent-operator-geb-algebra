@@ -2,17 +2,17 @@
 
 ## Status
 
-Proposed
+Updated
 
 ## Context
 
-The Domain Modeler application needs to integrate with Large Language Models (LLMs) to implement the business logic for domain modeling. The application follows a client-only approach with a Bring Your Own Key (BYOK) strategy, where users provide their own API keys for LLM providers.
+The Domain Modeler application needs to integrate with Large Language Models (LLMs) to implement the business logic for domain modeling. The application follows a client-only approach where API keys for LLM providers are passed directly to the service methods when needed.
 
 Key requirements:
 
-1. Support multiple LLM providers (Anthropic as first priority, then others)
+1. Support Anthropic as the LLM provider
 2. Client-side implementation with no server component
-3. Secure handling of user-provided API keys
+3. Secure handling of API keys
 4. Consistent interface for domain services to interact with LLMs
 5. Maintainable code that can adapt to API changes from providers
 
@@ -23,18 +23,13 @@ We will implement a dedicated LLM domain with the following components:
 ### 1. Models (`app/domain/llm/models.ts`)
 
 ```typescript
-export type LlmProvider = "anthropic" | "openai" | "google" | "mistral";
-
 export type LlmModel = {
-  provider: LlmProvider;
   modelName: string;
   contextWindow: number;
   capabilities: string[];
 };
 
 export type LlmConfig = {
-  provider: LlmProvider;
-  apiKey: string;
   model: string;
   temperature: number;
   maxTokens: number;
@@ -63,9 +58,9 @@ export type LlmResponse = {
 
 ```typescript
 export const LlmConfigFactory = {
-  create(provider: LlmProvider, apiKey: string, model: string, temperature = 0.7, maxTokens = 2000): LlmConfig {
+  create(model: string, temperature = 0.7, maxTokens = 2000): LlmConfig {
     // Validation logic
-    return { provider, apiKey, model, temperature, maxTokens };
+    return { model, temperature, maxTokens };
   }
 };
 
@@ -82,41 +77,43 @@ export const LlmPromptFactory = {
 ```typescript
 export const LlmConfigRepository = {
   async save(config: LlmConfig): Promise<void> {
-    // Save to localforage with encryption for API key
+    // Save configuration to localforage
   },
   
   async get(): Promise<LlmConfig | null> {
-    // Get from localforage
+    // Get configuration from localforage
   }
 };
 ```
 
 ### 4. Services (`app/domain/llm/services.ts`)
 
-The LlmService will act as a facade that wraps and hides the provider-specific API client implementations:
+The LlmService will accept the API key as an argument for each method that requires it:
 
 ```typescript
 export const LlmService = {
-  async sendPrompt(config: LlmConfig, prompt: LlmPrompt): Promise<LlmResponse> {
-    switch (config.provider) {
-      case "anthropic":
-        return await sendToAnthropic(config, prompt);
-      case "openai":
-        return await sendToOpenAI(config, prompt);
-      // Other providers...
-      default:
-        throw new Error(`Unsupported provider: ${config.provider}`);
+  async sendPrompt(config: LlmConfig, prompt: LlmPrompt, apiKey: string): Promise<LlmResponse> {
+    if (!apiKey) {
+      throw new Error("API key is required");
     }
+    return await sendToAnthropic(config, prompt, apiKey);
+  },
+  
+  async getAvailableModels(apiKey: string): Promise<string[]> {
+    if (!apiKey) {
+      throw new Error("API key is required");
+    }
+    return await getAnthropicModels(apiKey);
   }
 };
 
 // Provider-specific implementations hidden as private functions
-async function sendToAnthropic(config: LlmConfig, prompt: LlmPrompt): Promise<LlmResponse> {
+async function sendToAnthropic(config: LlmConfig, prompt: LlmPrompt, apiKey: string): Promise<LlmResponse> {
   // Implementation for Anthropic Claude API
 }
 
-async function sendToOpenAI(config: LlmConfig, prompt: LlmPrompt): Promise<LlmResponse> {
-  // Implementation for OpenAI API
+async function getAnthropicModels(apiKey: string): Promise<string[]> {
+  // Implementation for Anthropic models
 }
 ```
 
@@ -124,42 +121,39 @@ async function sendToOpenAI(config: LlmConfig, prompt: LlmPrompt): Promise<LlmRe
 
 ### Positive
 
-1. **Abstraction of Provider APIs**: The domain services interact with a consistent interface (LlmService) regardless of the underlying LLM provider, making it easier to switch providers or support multiple providers.
+1. **Improved Security**: API keys are not stored in the browser's local storage, reducing risks of key exposure.
 
-2. **Improved Maintainability**: Changes to provider APIs are isolated to the provider-specific implementation functions, limiting the impact on the rest of the application.
+2. **Explicit API Key Handling**: Each service method explicitly requires the API key, making the dependency clear.
 
-3. **Separation of Concerns**: The LLM domain is responsible only for LLM interactions, while the modeling domain focuses on domain modeling logic.
+3. **Simplified Implementation**: The implementation focuses on a single provider (Anthropic), making it more straightforward.
 
-4. **Client-Side Security**: API keys are stored locally in the user's browser and sent directly to the LLM provider, avoiding the need for a server to handle sensitive credentials.
+4. **Separation of Concerns**: The LLM domain is responsible only for LLM interactions, while the modeling domain focuses on domain modeling logic.
 
-5. **Flexibility**: The design supports adding new LLM providers with minimal changes to the codebase.
+5. **Flexibility**: The design allows API keys to be managed by the application in various ways.
 
 ### Negative
 
 1. **Client-Side Performance**: LLM API calls from the client may introduce latency, especially for complex prompts.
 
-2. **Browser Limitations**: The application is subject to browser limitations for API calls and local storage.
+2. **Browser Limitations**: The application is subject to browser limitations for API calls.
 
-3. **Dependency on External APIs**: The application depends on the availability and stability of third-party LLM APIs.
+3. **Dependency on External APIs**: The application depends on the availability and stability of the Anthropic API.
 
 ### Risks and Mitigations
 
-1. **Risk**: LLM provider APIs may change, breaking the integration.
+1. **Risk**: Anthropic API may change, breaking the integration.
    - **Mitigation**: Isolate provider-specific code in private functions, making updates easier to implement.
 
-2. **Risk**: Different providers have different capabilities and response formats.
-   - **Mitigation**: Normalize responses in the provider-specific functions to ensure a consistent interface.
-
-3. **Risk**: API keys stored in the browser may be vulnerable.
-   - **Mitigation**: Use encryption for stored API keys and implement proper security measures.
+2. **Risk**: API keys passed through function arguments may be exposed in stack traces or logs.
+   - **Mitigation**: Implement proper error handling to prevent API keys from appearing in logs or stack traces.
 
 ## Implementation Notes
 
-1. We will need to add dependencies for the LLM provider APIs (e.g., @anthropic-ai/sdk for Anthropic).
+1. We will focus on supporting Anthropic's Claude API.
 
 2. The LlmService should include error handling and retry logic for API failures.
 
-3. We should implement a mechanism to validate API keys before saving them.
+3. We should implement a mechanism to validate API keys before using them.
 
 4. The LlmPromptFactory should include templates for different domain modeling tasks.
 
