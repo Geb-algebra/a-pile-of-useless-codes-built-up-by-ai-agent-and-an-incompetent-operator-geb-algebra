@@ -244,32 +244,44 @@ export default function Home({ loaderData, actionData }: Route.ComponentProps) {
 
 Keep in mind that `loader` and `action` runs in server while other Route Modules (`meta, clientLoader, clientAction` etc and the default export component) runs in client. You can't include client-only codes (`window`, `localStorage` etc) in `loader` and `action` and can't include server-only codes (interacting with DB etc) in other Route Modules.
 
-## Flowchart for development
+## ADR
 
-```mermaid
+You must record your plannings on an ADR in `./decisions`. ADRs should mainly contain key decisions and why the decisions are made, not how.
 
-graph TD
-    start[Operator creates and updates domain objects] --> op_ask[Operator asks you to implement]
-    op_ask --> plan[Plan what you will do and list and describe all Factories, Repositories, and Services to create or update]
-    plan --> rev_plan[Operator reviews your plan]
-    rev_plan --> plan_approved{Operator approved your plan?}
-    plan_approved --> |Yes|write_tests[Write unit tests for all Factories, Repositories, and Services]
-    plan_approved --> |No|fix_plan[Fix your plan following the operator's comments]
-    fix_plan --> rev_plan
-    write_tests --> rev_tests[Operator reviews your tests]
-    rev_tests --> tests_approved{Operator approved your tests?}
-    tests_approved --> |Yes|implement_feature[Implement the feature]
-    tests_approved --> |No|fix_tests[Fix your tests following the operator's comments]
-    fix_tests --> rev_tests
-    implement_feature --> run_tests[Run tests]
-    run_tests --> pass{Did all tests pass?}
-    pass --> |Yes|complete[Feature implementation complete]
-    pass --> |No|have_you_tried_to_fix_implementation_for_5_times{Have you tried to fix the implementation for 5 times?}
-    have_you_tried_to_fix_implementation_for_5_times --> |Yes|ask_operator_for_help[Ask the operator for help]
-    have_you_tried_to_fix_implementation_for_5_times --> |No|fix_implementation[Fix the implementation]
-    ask_operator_for_help --> fix_implementation
-    fix_implementation --> run_tests
-```
+When to write ADR is specified in "Development Process" section below.
+
+## Development Process
+
+The implementation task is separated in several stages. 
+
+At the beginning of your task, the operator will tell you which stage you should do. Focus on the stage.
+
+Don't forget to update memory bank after a task finishes.
+
+### Object creation stage
+
+1. Operator creates and updates domain objects
+2. Operator asks you to implement Factories and Repositories with a storage solution you should use
+3. You Implement Factories and Repositories for all domain objects.
+4. You ask the operator a review. If Operator approves, finish the task. Otherwise fix implementation and do this step again.
+
+### Service implementation stage
+
+1. You plan how to implement service functions to achieve the application use cases described in `.ai/memory-bank/projectbrief.md`. Don't change any files at this step.
+2. You ask the operator a review. If Operator approves, go to the next step. Otherwise fix the plan and do this step again.
+3. You write key decisions in your plan on an ADR.
+4. You implement thorough tests for all the services in the plan.
+5. You ask the operator a review. If Operator approves, go to the next step. Otherwise fix test cases and do this step again.
+6. You implement all the services to pass all the tests.
+7. You ask the operator a review. If Operator approves, finish the task. Otherwise fix implementation and do this step again.
+
+### Application implementation stage
+
+1. You plan how to implement pages and components to achieve the application use cases described in `.ai/memory-bank/projectbrief.md`. Don't change any files at this step.
+2. You ask the operator a review. If Operator approves, go to the next step. Otherwise fix the plan and do this step again.
+3. You write key decisions in your plan on an ADR.
+4. You implement the pages and components you planned.
+5. You ask the operator a review. If Operator approves, finish the task. Otherwise fix test cases and do this step again.
 
 ## Instructions
 
@@ -278,3 +290,7 @@ Re-consider your plan after you failed (test failed or rejected by the operator)
 Ensure `pnpm run validate` command passes before you report completions of your tasks.
 
 install packages by `pnpm add package-name` and `pnpm add -D package-name`
+
+When you want to fix lint and format errors, first try fixing with `pnpm run check:write-unsafe` to reduce file read and write. If there's still some errors after the command, then fix them manually.=
+
+Run tests with `pnpm run test:unit:run`. The `test:unit` command is for humans.
