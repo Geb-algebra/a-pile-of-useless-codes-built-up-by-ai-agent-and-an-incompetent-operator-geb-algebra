@@ -4,8 +4,6 @@ import { LlmConfigRepository } from "./repositories";
 
 describe("LlmConfigRepository", () => {
 	const testConfig: LlmConfig = {
-		provider: "anthropic",
-		apiKey: "test-api-key",
 		model: "claude-3-sonnet-20240229",
 		temperature: 0.7,
 		maxTokens: 2000,

@@ -1,13 +1,7 @@
 /**
- * Supported LLM providers
- */
-export type LlmProvider = "anthropic" | "openai" | "google" | "mistral";
-
-/**
  * Information about an LLM model
  */
 export type LlmModel = {
-	provider: LlmProvider;
 	modelName: string;
 	contextWindow: number;
 	capabilities: string[];
@@ -17,8 +11,6 @@ export type LlmModel = {
  * Configuration for LLM API calls
  */
 export type LlmConfig = {
-	provider: LlmProvider;
-	apiKey: string;
 	model: string;
 	temperature: number;
 	maxTokens: number;
@@ -54,5 +46,4 @@ export type LlmResponse = {
 export type LlmError = {
 	message: string;
 	code?: string;
-	provider?: LlmProvider;
 };

@@ -1,4 +1,4 @@
-import type { LlmConfig, LlmPrompt, LlmProvider } from "./models";
+import type { LlmConfig, LlmPrompt } from "./models";
 
 /**
  * Factory for creating LLM configuration objects
@@ -6,28 +6,12 @@ import type { LlmConfig, LlmPrompt, LlmProvider } from "./models";
 export const LlmConfigFactory = {
 	/**
 	 * Create a new LLM configuration
-	 * @param provider LLM provider
-	 * @param apiKey API key for the provider
 	 * @param model Model name to use
 	 * @param temperature Temperature parameter (0.0-1.0)
 	 * @param maxTokens Maximum tokens to generate
 	 * @returns LLM configuration object
 	 */
-	create(
-		provider: LlmProvider,
-		apiKey: string,
-		model: string,
-		temperature = 0.7,
-		maxTokens = 2000,
-	): LlmConfig {
-		if (!provider) {
-			throw new Error("Provider is required");
-		}
-
-		if (!apiKey) {
-			throw new Error("API key is required");
-		}
-
+	create(model: string, temperature = 0.7, maxTokens = 2000): LlmConfig {
 		if (!model) {
 			throw new Error("Model is required");
 		}
@@ -41,8 +25,6 @@ export const LlmConfigFactory = {
 		}
 
 		return {
-			provider,
-			apiKey,
 			model,
 			temperature,
 			maxTokens,

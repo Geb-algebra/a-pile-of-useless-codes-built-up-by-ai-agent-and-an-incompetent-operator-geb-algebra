@@ -17,7 +17,6 @@ export const LlmConfigRepository = {
 	 */
 	async save(config: LlmConfig): Promise<void> {
 		try {
-			// In a real implementation, we would encrypt the API key before storing it
 			await llmConfigStore.setItem("current-config", config);
 		} catch (error) {
 			console.error("Failed to save LLM configuration:", error);

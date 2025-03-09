@@ -3,11 +3,9 @@ import { LlmConfigFactory, LlmPromptFactory } from "./factories";
 
 describe("LlmConfigFactory", () => {
 	it("should create a valid LLM configuration", () => {
-		const config = LlmConfigFactory.create("anthropic", "test-api-key", "claude-3-sonnet-20240229");
+		const config = LlmConfigFactory.create("claude-3-sonnet-20240229");
 
 		expect(config).toEqual({
-			provider: "anthropic",
-			apiKey: "test-api-key",
 			model: "claude-3-sonnet-20240229",
 			temperature: 0.7,
 			maxTokens: 2000,
@@ -15,53 +13,38 @@ describe("LlmConfigFactory", () => {
 	});
 
 	it("should create a configuration with custom temperature and maxTokens", () => {
-		const config = LlmConfigFactory.create("openai", "test-api-key", "gpt-4", 0.5, 1000);
+		const config = LlmConfigFactory.create("claude-3-opus-20240229", 0.5, 1000);
 
 		expect(config).toEqual({
-			provider: "openai",
-			apiKey: "test-api-key",
-			model: "gpt-4",
+			model: "claude-3-opus-20240229",
 			temperature: 0.5,
 			maxTokens: 1000,
 		});
 	});
 
-	it("should throw an error if provider is missing", () => {
-		expect(() => {
-			// Use a type assertion to a specific string type instead of any
-			LlmConfigFactory.create("" as unknown as "anthropic", "test-api-key", "gpt-4");
-		}).toThrow("Provider is required");
-	});
-
-	it("should throw an error if apiKey is missing", () => {
-		expect(() => {
-			LlmConfigFactory.create("openai", "", "gpt-4");
-		}).toThrow("API key is required");
-	});
-
 	it("should throw an error if model is missing", () => {
 		expect(() => {
-			LlmConfigFactory.create("openai", "test-api-key", "");
+			LlmConfigFactory.create("");
 		}).toThrow("Model is required");
 	});
 
 	it("should throw an error if temperature is out of range", () => {
 		expect(() => {
-			LlmConfigFactory.create("openai", "test-api-key", "gpt-4", 1.5);
+			LlmConfigFactory.create("claude-3-sonnet-20240229", 1.5);
 		}).toThrow("Temperature must be between 0 and 1");
 
 		expect(() => {
-			LlmConfigFactory.create("openai", "test-api-key", "gpt-4", -0.1);
+			LlmConfigFactory.create("claude-3-sonnet-20240229", -0.1);
 		}).toThrow("Temperature must be between 0 and 1");
 	});
 
 	it("should throw an error if maxTokens is less than 1", () => {
 		expect(() => {
-			LlmConfigFactory.create("openai", "test-api-key", "gpt-4", 0.7, 0);
+			LlmConfigFactory.create("claude-3-sonnet-20240229", 0.7, 0);
 		}).toThrow("Max tokens must be greater than 0");
 
 		expect(() => {
-			LlmConfigFactory.create("openai", "test-api-key", "gpt-4", 0.7, -10);
+			LlmConfigFactory.create("claude-3-sonnet-20240229", 0.7, -100);
 		}).toThrow("Max tokens must be greater than 0");
 	});
 });
