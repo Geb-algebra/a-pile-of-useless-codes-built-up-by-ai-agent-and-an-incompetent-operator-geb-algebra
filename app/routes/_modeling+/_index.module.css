@@ -1,0 +1,30 @@
+.mainLayout {
+	display: grid;
+	flex-direction: row;
+	grid-template-columns: 768px;
+	justify-content: center;
+	align-items: center;
+	gap: 24px;
+}
+
+.textAreaLayout {
+	display: grid;
+	flex-direction: row;
+	grid-template-rows: 1fr 32px;
+	grid-template-columns: 1fr auto;
+	grid-template-areas:
+		"textarea textarea"
+		"models button";
+}
+
+.textArea {
+	grid-area: textarea;
+}
+
+.models {
+	grid-area: models;
+}
+
+.button {
+	grid-area: button;
+}

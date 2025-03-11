@@ -18,6 +18,7 @@
 		"validate": "npm run check && npm run typecheck"
 	},
 	"dependencies": {
+		"@radix-ui/react-select": "^2.1.6",
 		"@radix-ui/react-slot": "^1.1.2",
 		"@react-router/node": "^7.3.0",
 		"@react-router/serve": "^7.3.0",
@@ -27,6 +28,7 @@
 		"hono-react-router-adapter": "^0.6.2",
 		"isbot": "^5.1.23",
 		"localforage": "^1.10.0",
+		"lucide-react": "^0.479.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-router": "^7.3.0",

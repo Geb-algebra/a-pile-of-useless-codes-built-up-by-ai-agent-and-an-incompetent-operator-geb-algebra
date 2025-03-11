@@ -198,12 +198,12 @@ If you think you have to make some changes to domain objects, you have to ask th
 ### UI component
 
 - Please use the following three methods in order of priority from top to bottom.
-    - use shadcn/ui components with their default style
-    - use shadcn/ui components with custom style
-    - implement components by yourself
+  - use shadcn/ui components with their default style
+  - use shadcn/ui components with custom style
+  - implement components by yourself
 - use tailwind css only for styling shapes and colors of HTML elements and texts. Never use it for defining layouts and placements of elements
 - Use css modules only for defining layouts and placements of elements. Never use it for styling shapes and colors
-- Prefer grid layout over other methods such as flex and, if applicable, the best way is to use `grid-template-areas`. 
+- Prefer grid layout over other methods such as flex and, if applicable, the best way is to use `grid-template-areas`.
 
 ### React Router's Route modules
 
@@ -229,16 +229,16 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export function meta({ request }: Route.MetaArgs) {
-	return [
-		{ title: "pagename" },
-		{ name: "description", content: "blah blah" },
-	];
+ return [
+  { title: "pagename" },
+  { name: "description", content: "blah blah" },
+ ];
 }
 
 export default function Home({ loaderData, actionData }: Route.ComponentProps) {
-	return (
+ return (
         // page component
-	);
+ );
 }
 ```
 
@@ -252,7 +252,7 @@ When to write ADR is specified in "Development Process" section below.
 
 ## Development Process
 
-The implementation task is separated in several stages. 
+The implementation task is separated in several stages.
 
 At the beginning of your task, the operator will tell you which stage you should do. Focus on the stage.
 
@@ -298,6 +298,6 @@ Run tests with `pnpm run test:unit:run`. The `test:unit` command is for humans.
 Dont read these files:
 
 - .react-router/*
-- +types/*
+- ./+types/*
 - .env
 - .dev.vars
